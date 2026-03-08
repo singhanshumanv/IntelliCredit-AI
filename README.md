@@ -188,14 +188,3 @@ streamlit run app.py
 
 <hr>
 
-<h2>👨‍💻 Author</h2>
-
-<p>
-Developed as an AI-powered credit intelligence platform for financial decision automation.
-</p>
-
-<hr>
-
-<p align="center">
-<b>IntelliCredit AI — Building the Future of AI-Powered Credit Analysis</b>
-</p>
