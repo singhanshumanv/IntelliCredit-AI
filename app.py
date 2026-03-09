@@ -13,6 +13,8 @@ from report_generator import generate_cam_report
 from explainability_engine import explain_decision
 from news_agent import fetch_company_news, analyze_news_risk
 import plotly.graph_objects as go
+import re
+
 
 
 
@@ -49,6 +51,21 @@ st.sidebar.markdown("### System Status")
 st.sidebar.success("RAG Engine Ready")
 st.sidebar.success("Risk Engine Active")
 st.sidebar.success("Decision Engine Active")
+
+
+
+
+def extract_number(value):
+
+    if isinstance(value, str):
+        nums = re.findall(r'\d+', value)
+        return float(nums[0]) if nums else 0
+
+    if isinstance(value, dict):
+        return extract_number(list(value.values())[0])
+
+    return value
+
 
 
 
@@ -94,6 +111,20 @@ Document:
       content = content.replace("```json", "").replace("```", "")
     
       data = json.loads(content)
+
+
+      # normalize numbers
+      if "revenue_by_year" in data:
+        for k,v in data["revenue_by_year"].items():
+          data["revenue_by_year"][k] = extract_number(v)
+
+      if "profit_by_year" in data:
+        for k,v in data["profit_by_year"].items():
+          data["profit_by_year"][k] = extract_number(v)
+
+      if "debt_by_year" in data:
+        for k,v in data["debt_by_year"].items():
+          data["debt_by_year"][k] = extract_number(v)
 
 
       progress = st.progress(0)
@@ -167,9 +198,11 @@ Document:
       decision = loan_decision(data, score)
       st.subheader("Credit Decision")
 
-      st.write("Decision:", decision["decision"])
-      st.write("Suggested Loan Amount:", decision["loan_amount"], "crore")
-      st.write("Interest Rate:", decision["interest_rate"], "%")
+
+      if decision:
+       st.write("Decision:", decision["decision"])
+       st.write("Suggested Loan Amount:", decision["loan_amount"], "crore")
+       st.write("Interest Rate:", decision["interest_rate"], "%")
 
 
 

@@ -4,9 +4,20 @@ def loan_decision(data, score):
     profit = data.get("profit_by_year", {})
     debt = data.get("debt_by_year", {})
 
-    latest_revenue = list(revenue.values())[-1] if revenue else 0
-    latest_profit = list(profit.values())[-1] if profit else 0
-    latest_debt = list(debt.values())[-1] if debt else 0
+    def to_number(value):
+
+      if isinstance(value, dict):
+        value = list(value.values())[0]
+
+      try:
+        return float(value)
+      except:
+        return 0
+
+
+    latest_revenue = to_number(list(revenue.values())[-1]) if revenue else 0
+    latest_profit = to_number(list(profit.values())[-1]) if profit else 0
+    latest_debt = to_number(list(debt.values())[-1]) if debt else 0
 
     decision = "REJECT"
     amount = 0

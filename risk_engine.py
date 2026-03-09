@@ -9,21 +9,57 @@ def calculate_risk_score(data):
 
     # Debt risk
     if debt:
-        latest_debt = list(debt.values())[-1]
-        if latest_debt > 200:
-            score -= 20
+       latest_debt = list(debt.values())[-1]
+
+    # convert dict/string to number safely
+       if isinstance(latest_debt, dict):
+         latest_debt = list(latest_debt.values())[0]
+
+       try:
+         latest_debt = float(latest_debt)
+       except:
+         latest_debt = 0
+
+       if latest_debt > 200:
+         score -= 20
 
     # Profit trend
+    # Profit trend
     if profit:
-        profits = list(profit.values())
-        if profits[-1] < profits[0]:
-            score -= 15
+
+      profits = []
+
+      for v in profit.values():
+
+         if isinstance(v, dict):
+            v = list(v.values())[0]
+
+         try:
+            v = float(v)
+         except:
+            v = 0
+
+         profits.append(v)
+
+      if profits[-1] < profits[0]:
+         score -= 15
 
     # Revenue growth
     if revenue:
-        rev = list(revenue.values())
-        if rev[-1] <= rev[0]:
-            score -= 10
+
+      rev = []
+      for v in revenue.values():
+         if isinstance(v, dict):
+             v = list(v.values())[0]
+
+         try:
+             v = float(v)
+         except:
+             v = 0
+
+         rev.append(v)
+      if rev[-1] <= rev[0]:
+        score -= 10
 
     # Legal risks
     score -= len(risks) * 10
